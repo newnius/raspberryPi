@@ -1,0 +1,23 @@
+begin
+    prog = irexec
+    button = KEY_LEFT
+    config = echo "KEY_LEFT" >> hello.out
+end
+
+begin
+    prog = irexec
+    button = KEY_RIGHT
+    config = echo "KEY_RIGHT" >> hello.out
+end
+
+begin
+    prog = irexec
+    button = KEY_UP
+    config = amixer set PCM 200+
+end
+
+begin
+    prog = irexec
+    button = KEY_DOWN
+    config = amixer set PCM 200-
+end
