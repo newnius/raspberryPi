@@ -1,0 +1,175 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+//     PIC16F877 + HC-SR04 + LCD03 example
+//     Written October 2008 , using HITECH PIC16 compiler
+// 
+//		 Note - assumes a 20MHz crystal, which is 5MHz timer clock
+//		 A 1:4 prescaler is used to give a 1.25MHz timer count (0.8uS per tick)
+//
+//     This code is Freeware - Use it for any purpose you like.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+#include <pic.h>
+#include <stdio.h>
+	 
+__CONFIG(0x3b32);		
+
+#define trig	RB0
+#define echo	RB1
+
+void clrscn(void);							// prototypes
+void cursor(char pos);
+void print(char *p);
+void setup(void);
+unsigned int get_srf04(void);
+
+char s[21];										// buffer used to hold text to print
+
+void main(void)
+{
+unsigned int range;
+
+	setup();										// sets up the PIC16F877 I2C port
+	clrscn();									// clears the LCD03 disply
+	cursor(2);									// sets cursor to 1st row of LCD03
+	sprintf(s,"SRF04 Ranger Test");		// text, printed into our buffer
+	print(s);									// send it to the LCD03
+
+	while(1) {									// loop forever
+		range = get_srf04();					// get range from srf04 (round trip flight time in 0.8uS units)
+		cursor(24);								// sets cursor to 2nd row of LCD03
+		sprintf(s,"Range = %dcm  ", range/72);	// convert to cm
+		print(s);								// send it to the LCD03	
+		cursor(44);								// sets cursor to 3rd row of LCD03
+		sprintf(s,"Range = %dinch  ", range/185);	// convert to inches
+		print(s);								// send it to the LCD03	
+
+		TMR1H = 0;								// 52mS delay - this is so that the SRF04 ranging is not too rapid
+		TMR1L = 0;								// and the previous pulse has faded away before we start the next one
+		T1CON = 0x21;							// 1:4 prescale and running
+		TMR1IF = 0;
+		while(!TMR1IF);						// wait for delay time
+		TMR1ON = 0;								// stop timer	
+	}
+}
+
+unsigned int get_srf04(void)
+{
+	TMR1H = 0xff;						// prepare timer for 10uS pulse
+	TMR1L = -14;
+	T1CON = 0x21;						// 1:4 prescale and running
+	TMR1IF = 0;	
+	trig = 1;							// start trigger pulse
+	while(!TMR1IF);					// wait 10uS
+	trig = 0;							// end trigger pulse
+	TMR1ON = 0;							// stop timer
+		
+	TMR1H = 0;							// prepare timer to measure echo pulse
+	TMR1L = 0;
+	T1CON = 0x20;						// 1:4 prescale but not running yet
+	TMR1IF = 0;
+	while(!echo && !TMR1IF);		// wait for echo pulse to start (go high)
+	TMR1ON = 1;							// start timer to measure pulse
+	while(echo && !TMR1IF);			// wait for echo pulse to stop (go low)
+	TMR1ON = 0;							// stop timer
+	return (TMR1H<<8)+TMR1L;		// TMR1H:TMR1L contains flight time of the pulse in 0.8uS units
+}
+
+void clrscn(void)
+{
+	SEN = 1;								// send start bit
+	while(SEN);							// and wait for it to clear
+
+	SSPIF = 0;
+	SSPBUF = 0xc6;						// LCD02 I2C address
+	while(!SSPIF);						// wait for interrupt
+	SSPIF = 0;							// then clear it.
+
+	SSPBUF = 0;							// address of register to write to 
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+
+	SSPBUF = 12;						// clear screen 
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+
+	SSPBUF = 4;							// cursor off 
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+	 
+	PEN = 1;								// send stop bit
+	while(PEN);							//
+}
+
+		
+void cursor(char pos)
+{
+	SEN = 1;								// send start bit
+	while(SEN);							// and wait for it to clear
+
+	SSPIF = 0;
+	SSPBUF = 0xc6;						// LCD02 I2C address
+	while(!SSPIF);						// wait for interrupt
+	SSPIF = 0;							// then clear it.
+
+	SSPBUF = 0;							// address of register to write to 
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+
+	SSPBUF = 2;							// set cursor 
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+	SSPBUF = pos;						//  
+	while(!SSPIF);						// 
+	SSPIF = 0;							//
+	 
+	PEN = 1;								// send stop bit
+	while(PEN);							//
+}
+
+		
+void print(char *p)
+{
+	SEN = 1;								// send start bit
+	while(SEN);							// and wait for it to clear
+
+	SSPIF = 0;
+	SSPBUF = 0xc6;				// LCD02 I2C address
+	while(!SSPIF);				// wait for interrupt
+	SSPIF = 0;					// then clear it.
+
+	SSPBUF = 0;					// address of register to write to 
+	while(!SSPIF);				// 
+	SSPIF = 0;					//
+
+	while(*p) {
+		SSPBUF = *p++;			// write the data 
+		while(!SSPIF);			// 
+		SSPIF = 0;				// 
+	}
+
+	PEN = 1;					// send stop bit
+	while(PEN);					//
+}
+
+
+void setup(void)
+{
+unsigned long x;
+
+	TRISB = 0xfe;				// RB0 (trig) is output
+	PORTB = 0xfe;				// and starts low
+
+	TRISC = 0xff;
+	PORTC = 0xff;
+
+	SSPSTAT = 0x80;
+	SSPCON = 0x38;
+	SSPCON2 = 0x00;
+	SSPADD = 50;				// SCL = 91khz with 20Mhz Osc
+
+	for(x=0; x<300000L; x++);		// wait for LCD03 to initialise		
+}
+

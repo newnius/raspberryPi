@@ -1,0 +1,198 @@
+C51 COMPILER V9.00    µ—È ÆŒÂ____DS1302»’¿_ ±_” µ—È                                        01/01/2003 17:43:04 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE  µ—È ÆŒÂ____DS1302»’¿_ ±_” µ—È
+OBJECT MODULE PLACED IN  µ—È ÆŒÂ    DS1302»’¿˙ ±÷” µ—È.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE  µ—È ÆŒÂ    DS1302»’¿˙ ±÷” µ—È.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          
+   2          
+   3            /********************************************************
+   4           µ—È Ææ≈:   DS1302 ±÷”–æ∆¨ µ—È
+   5          Àµ√˜:       “ÚŒ™÷ª”–ÀƒŒª ˝¬Îπ‹£¨
+   6                      Œ™¡À∑Ω±„ø¥µΩ µ—È–ßÍΩ÷ªœ‘ æ∑÷”Î√Î
+   7           µ—Èœ÷œÛ:    ˝¬Îπ‹…œœ‘ æ∑÷”Î√Î 
+   8                    
+   9          CPU–Õ∫≈:    AT89S52
+  10           ±÷”:       Õ‚≤ø11.0592MHZ
+  11          
+  12          »’∆⁄£∫      2009-8-2
+  13          ¡™œµ∑Ω∑®:   MCU°£2000@163.com 
+  14          ********************************************************/
+  15          
+  16          #include <REG52.H>
+  17          #define uchar unsigned char 
+  18          #define uint unsigned int
+  19          uchar reg[] = {0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90,0xff};
+  20          uchar dis[6] = {0};
+  21          /*∂®“Â ˝¬Îπ‹Œªøÿ∂À*/
+  22          sbit  c1 = P1^0;    
+  23          sbit  c2 = P1^1;
+  24          sbit  c3 = P1^2;
+  25          sbit  c4 = P1^3;
+  26          /*∂®“ÂDS1302øÿ÷∆Ω≈*/
+  27          sbit  DS1302_CLK = P3^4;
+  28          sbit  DS1302_RST = P3^5;
+  29          sbit  DS1302_IO =  P3^3;
+  30          sbit  ACC0 = ACC^0;
+  31          sbit  ACC7 = ACC^7;
+  32          
+  33          uchar Flag = 0; 
+  34          uchar TempHour,TempMinute,TempSecond,Hour=12,Minute=12,Second=30;
+  35          #define DS1302_SECOND 0x80
+  36          #define DS1302_MINUTE 0x82
+  37          #define DS1302_HOUR   0x84
+  38          #define DS1302_WRITE  0x8E
+  39          #define DS1302_POWER  0x90
+  40          #define Time_24_Hour  0x00 //24 ±÷∆øÿ÷∆ 
+  41          #define BCD2DEC(X) (((X&0x70)>>4)*10 + (X&0x0F)) //”√”⁄Ω´BCD¬Î◊™≥… ÆΩ¯÷∆µƒ∫Í
+  42          #define DEC2BCD(X) ((X/10)<<4 | (X%10))          //”√”⁄Ω´ ÆΩ¯÷∆◊™≥…BCD¬Îµƒ∫Í
+  43          
+  44          // µ ± ±÷”–¥»Î“ª◊÷Ω⁄(ƒ⁄≤ø∫Ø ˝)
+  45          void DS1302InputByte(uchar d)
+  46          {
+  47   1          uchar i;
+  48   1          ACC = d;
+  49   1          for(i=8; i>0; i--)
+  50   1          {
+  51   2              DS1302_IO = ACC0;    //œ‡µ±”⁄ª„±‡÷–µƒ RRC
+  52   2              DS1302_CLK = 1;
+  53   2              DS1302_CLK = 0;
+  54   2              ACC = ACC >> 1;
+  55   2          }
+C51 COMPILER V9.00    µ—È ÆŒÂ____DS1302»’¿_ ±_” µ—È                                        01/01/2003 17:43:04 PAGE 2   
+
+  56   1      }
+  57          // µ ± ±÷”∂¡»°“ª◊÷Ω⁄(ƒ⁄≤ø∫Ø ˝)
+  58          uchar DS1302OutputByte(void)
+  59          {
+  60   1          unsigned char i;
+  61   1          for(i=8; i>0; i--)
+  62   1          {
+  63   2              ACC = ACC >>1;     //œ‡µ±”⁄ª„±‡÷–µƒ RRC
+  64   2              ACC7 = DS1302_IO;
+  65   2              DS1302_CLK = 1;
+  66   2              DS1302_CLK = 0;
+  67   2          }
+  68   1          return(ACC);
+  69   1      }
+  70          
+  71          //–¥DS1302,ucAddr: DS1302µÿ÷∑, ucData: “™–¥µƒ ˝æ›
+  72          void Write1302(uchar ucAddr, uchar ucDa)
+  73          {
+  74   1          DS1302_RST = 0;
+  75   1          DS1302_CLK = 0;
+  76   1          DS1302_RST = 1;
+  77   1          DS1302InputByte(ucAddr);        // µÿ÷∑£¨√¸¡Ó
+  78   1          DS1302InputByte(ucDa);        // –¥1Byte ˝æ›
+  79   1          DS1302_CLK = 1;
+  80   1          DS1302_RST = 0;
+  81   1      }
+  82          
+  83          //∂¡»°DS1302ƒ≥µÿ÷∑µƒ ˝æ›
+  84          uchar Read1302(uchar ucAddr)
+  85          {
+  86   1            uchar ucData;
+  87   1            DS1302_RST = 0;
+  88   1            DS1302_CLK = 0;
+  89   1            DS1302_RST = 1;
+  90   1            DS1302InputByte(ucAddr|0x01);        // µÿ÷∑£¨√¸¡Ó
+  91   1            ucData = DS1302OutputByte();         // ∂¡1Byte ˝æ›
+  92   1            DS1302_CLK = 1;
+  93   1            DS1302_RST = 0;
+  94   1            return(ucData);
+  95   1      }
+  96          
+  97          void delay(uchar i)     //—” ±
+  98          {   
+  99   1           for(;i>0;i--)
+ 100   1           {
+ 101   2           uchar j=244;while(--j);
+ 102   2           }
+ 103   1      }
+ 104          void Display(void)     //∂ØÃ¨…®√Ëœ‘ æ
+ 105          { 
+ 106   1           P1=0X00;
+ 107   1               P0=reg[dis[2]];
+ 108   1           c1=1;
+ 109   1           delay(2);
+ 110   1           c1=0;
+ 111   1       
+ 112   1           P0=reg[dis[3]]&0x7f;
+ 113   1           c2=1;
+ 114   1           delay(2);
+ 115   1           c2=0;
+ 116   1        
+ 117   1           P0=reg[dis[4]];
+C51 COMPILER V9.00    µ—È ÆŒÂ____DS1302»’¿_ ±_” µ—È                                        01/01/2003 17:43:04 PAGE 3   
+
+ 118   1           c3=1;
+ 119   1           delay(2);
+ 120   1           c3=0;
+ 121   1        
+ 122   1           P0=reg[dis[5]];
+ 123   1           c4=1;
+ 124   1           delay(2);
+ 125   1           c4=0;    
+ 126   1      }
+ 127          
+ 128          //∂¡»° ±º‰∫Ø ˝
+ 129          void DS1302_GetTime(void)
+ 130          {
+ 131   1           uchar ReadValue;
+ 132   1           ReadValue = Read1302(DS1302_SECOND);
+ 133   1           TempSecond = BCD2DEC(ReadValue&0x7F);
+ 134   1               ReadValue = Read1302(DS1302_MINUTE);
+ 135   1           TempMinute = BCD2DEC(ReadValue);
+ 136   1           ReadValue = Read1302(DS1302_HOUR);
+ 137   1           TempHour = BCD2DEC(ReadValue&0x7F);
+ 138   1      }
+ 139          
+ 140          //…Ë÷√ ±º‰∫Ø ˝
+ 141          void DS1302_SetTime(void)
+ 142          {
+ 143   1           Write1302(DS1302_WRITE,0x00);  //πÿ±’–¥±£ª§
+ 144   1           Write1302(DS1302_HOUR,DEC2BCD(Hour)|Time_24_Hour);
+ 145   1           Write1302(DS1302_MINUTE,DEC2BCD(Minute));
+ 146   1           Write1302(DS1302_SECOND,DEC2BCD(Second));
+ 147   1           Write1302(DS1302_WRITE,0x80);  //¥Úø™–¥±£ª§ 
+ 148   1      }
+ 149          
+ 150          void Hex2Bcd(void)
+ 151          {
+ 152   1           dis[0] = TempHour/10;
+ 153   1           dis[1] = TempHour%10;
+ 154   1           dis[2] = TempMinute/10;
+ 155   1           dis[3] = TempMinute%10;
+ 156   1           dis[4] = TempSecond/10;
+ 157   1           dis[5] = TempSecond%10; 
+ 158   1      }
+ 159          
+ 160          void main(void)
+ 161          {
+ 162   1           DS1302_SetTime();
+ 163   1           while(1)
+ 164   1           {
+ 165   2           DS1302_GetTime();
+ 166   2           Hex2Bcd();
+ 167   2           Display();
+ 168   2           }
+ 169   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    386    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     24       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.00    µ—È ÆŒÂ____DS1302»’¿_ ±_” µ—È                                        01/01/2003 17:43:04 PAGE 4   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

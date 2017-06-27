@@ -1,0 +1,12 @@
+[Header]
+MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
+Version=1.0
+[File000]
+Location=E:\PIC Example program\Experiment_19\DS1302.obj
+Folder=Intermediary
+[File001]
+Location=E:\PIC Example program\Experiment_19\DS1302.cce
+Folder=Intermediary
+[File002]
+Location=Experiment19_DS1302.cof
+Folder=Output

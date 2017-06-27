@@ -1,0 +1,1031 @@
+
+
+HI-TECH Software PICC Macro Assembler V8.05PL2
+Serial number: HCPIC-16978                            Sun Aug  7 02:09:25 2011
+
+Licensed to: ELEKTRODA
+     1                           	processor	16F877A
+     2                           	opt	pw 79
+     3                           	psect	__Z16978RS_,global,delta=1
+     4                           	psect	config,global,class=CONFIG,delta=2
+     5                           	psect	rdata_0,global,class=BANK0,space=1,delta
+      +                          =1
+     6                           	psect	idata_0,global,class=CODE,delta=2
+     7                           	psect	text5,local,class=CODE,delta=2
+     8                           	psect	text6,local,class=CODE,delta=2
+     9                           	psect	text8,local,class=CODE,delta=2
+    10                           	psect	intcode,global,class=CODE,delta=2
+    11                           	psect	intsave_0,global,ovrld,class=COMBANK,spa
+      +                          ce=1,delta=1
+    12                           	psect	intret,global,class=CODE,delta=2
+    13                           	psect	intentry,global,class=CODE,delta=2
+    14                           	psect	intsave,global,class=BANK0,space=1,delta
+      +                          =1
+    15                           	psect	text11,local,class=CODE,delta=2
+    16                           	psect	rbss_0,global,class=BANK0,space=1,delta=
+      +                          1
+    17                           	psect	temp,global,ovrld,class=BANK0,space=1,de
+      +                          lta=1
+    18  0000                     
+    19  0000                     
+    20  0000                     
+    21  0000                     
+    22  0000                     
+    23  0000                     
+    24  0000                     
+    25  0000                     
+    26  0000                     
+    27  0000                     
+    28                           
+    29                           	psect	__Z16978RS_
+    30  0190                     
+    31  0190                     	;#
+    32                           
+    33                           	psect	config
+    34  2007  3F32               	dw	16178	;#
+    35                           
+    36                           	psect	rdata_0
+    37  0032                     _Table
+    38  0032                     	ds	1
+    39  0033                     	ds	1
+    40  0034                     	ds	1
+    41  0035                     	ds	1
+    42  0036                     	ds	1
+    43  0037                     	ds	1
+    44  0038                     	ds	1
+    45  0039                     	ds	1
+    46  003A                     	ds	1
+    47  003B                     	ds	1
+    48  003C                     	ds	1
+    49  003D                     _temp_pa
+    50  003D                     	ds	1
+    51  0000                     _ds1302_write$data	set	?_ds1302_write
+    52                           
+    53                           	psect	idata_0
+    54  07F4  34C0               	retlw	-64
+    55  07F5  34F9               	retlw	-7
+    56  07F6  34A4               	retlw	-92
+    57  07F7  34B0               	retlw	-80
+    58  07F8  3499               	retlw	-103
+    59  07F9  3492               	retlw	-110
+    60  07FA  3482               	retlw	-126
+    61  07FB  34F8               	retlw	-8
+    62  07FC  3480               	retlw	-128
+    63  07FD  3490               	retlw	-112
+    64  07FE  34FF               	retlw	-1
+    65  07FF  34FF               	retlw	-1
+    66                           
+    67                           	psect	text5
+    68                           ;DS1302.C: 191: void delay_us(unsigned char i)
+    69                           ;DS1302.C: 192: {
+    70  06A8                     _delay_us
+    71                           ;	_i assigned to ?a_delay_us+0
+    72  0000                     _delay_us$i	set	?a_delay_us
+    73                           ;_i stored from w
+    74  06A8  0183               	clrf	3	;select bank 0
+    75  06A9  00AD               	movwf	?a_delay_us
+    76                           ;DS1302.C: 193: for(;i;i--);
+    77  06AA  2EAC               	goto	l30
+    78  06AB                     l27
+    79  06AB  03AD               	decf	?a_delay_us
+    80  06AC                     l30
+    81  06AC  1283               	bcf	3,5
+    82  06AD  1303               	bcf	3,6	;carry unused
+    83  06AE  08AD               	movf	?a_delay_us
+    84  06AF  1903               	btfsc	3,2
+    85  06B0  0008               	return
+    86  06B1  2EAB               	goto	l27
+    87                           
+    88                           	psect	text6
+    89  06B2                     _delay
+    90                           ;	_j assigned to ?a_delay+0
+    91  0000                     _delay$j	set	?a_delay
+    92                           ;DS1302.C: 199: unsigned char j;
+    93  06B2  2EBE               	goto	l35
+    94  06B3                     l32
+    95                           ;DS1302.C: 201: for(j=220;j;j--);
+    96  06B3  30DC               	movlw	-36
+    97  06B4  00B1               	movwf	?a_delay
+    98  06B5                     l39
+    99  06B5  08B1               	movf	?a_delay
+   100  06B6  1903               	btfsc	3,2
+   101  06B7  2EBA               	goto	l37
+   102  06B8  03B1               	decf	?a_delay
+   103  06B9  2EB5               	goto	l39
+   104  06BA                     l37
+   105  06BA  08AF               	movf	?_delay
+   106  06BB  1903               	btfsc	3,2
+   107  06BC  03B0               	decf	?_delay+1
+   108  06BD  03AF               	decf	?_delay
+   109  06BE                     l35
+   110  06BE  1283               	bcf	3,5
+   111  06BF  1303               	bcf	3,6	;carry unused
+   112  06C0  0830               	movf	?_delay+1,w
+   113  06C1  042F               	iorwf	?_delay,w
+   114  06C2  1903               	btfsc	3,2
+   115  06C3  0008               	return
+   116  06C4  2EB3               	goto	l32
+   117                           ;DS1302.C: 235: void Process(void)
+   118                           ;DS1302.C: 236: {
+   119  06C5                     _Process
+   120                           ;DS1302.C: 237: s[3]=Table[(timer[5]&0xF0)>>4];
+   121  06C5  0183               	clrf	3	;select bank 0
+   122  06C6  082A               	movf	_timer+5,w
+   123  06C7  39F0               	andlw	-16
+   124  06C8  00F0               	movwf	btemp
+   125  06C9  0EF0               	swapf	btemp
+   126  06CA  300F               	movlw	15
+   127  06CB  05F0               	andwf	btemp
+   128  06CC  0870               	movf	btemp,w
+   129  06CD  3E32               	addlw	_Table
+   130  06CE  0084               	movwf	4
+   131  06CF  1383               	bcf	3,7
+   132  06D0  0800               	movf	0,w
+   133  06D1  00A4               	movwf	_s+3
+   134                           ;DS1302.C: 238: s[2]=Table[(timer[5]&0x0F)]&0x7
+      +                          F;
+   135  06D2  082A               	movf	_timer+5,w
+   136  06D3  390F               	andlw	15
+   137  06D4  3E32               	addlw	_Table
+   138  06D5  0084               	movwf	4
+   139  06D6  0800               	movf	0,w
+   140  06D7  397F               	andlw	127
+   141  06D8  00A3               	movwf	_s+2
+   142                           ;DS1302.C: 239: s[1]=Table[(timer[6]&0xF0)>>4];
+   143  06D9  082B               	movf	_timer+6,w
+   144  06DA  39F0               	andlw	-16
+   145  06DB  00F0               	movwf	btemp
+   146  06DC  0EF0               	swapf	btemp
+   147  06DD  300F               	movlw	15
+   148  06DE  05F0               	andwf	btemp
+   149  06DF  0870               	movf	btemp,w
+   150  06E0  3E32               	addlw	_Table
+   151  06E1  0084               	movwf	4
+   152  06E2  0800               	movf	0,w
+   153  06E3  00A2               	movwf	_s+1
+   154                           ;DS1302.C: 240: s[0]=Table[(timer[6]&0x0F)];
+   155  06E4  082B               	movf	_timer+6,w
+   156  06E5  390F               	andlw	15
+   157  06E6  3E32               	addlw	_Table
+   158  06E7  0084               	movwf	4
+   159  06E8  0800               	movf	0,w
+   160  06E9  00A1               	movwf	_s
+   161                           ;DS1302.C: 241: }
+   162  06EA  0008               	return
+   163                           ;DS1302.C: 110: unsigned char ds1302_read(unsig
+      +                          ned char add)
+   164                           ;DS1302.C: 111: {
+   165  06EB                     _ds1302_read
+   166                           ;	_add assigned to ?a_ds1302_read+0
+   167  0000                     _ds1302_read$add	set	?a_ds1302_read
+   168                           ;	_data assigned to ?a_ds1302_read+1
+   169  0000                     _ds1302_read$data	set	?a_ds1302_read+1
+   170                           ;	_i assigned to ?a_ds1302_read+2
+   171  0000                     _ds1302_read$i	set	?a_ds1302_read+2
+   172                           ;_add stored from w
+   173  06EB  0183               	clrf	3	;select bank 0
+   174  06EC  00AF               	movwf	?a_ds1302_read
+   175                           ;DS1302.C: 112: unsigned char data=0;
+   176  06ED  01B0               	clrf	?a_ds1302_read+1
+   177                           ;DS1302.C: 113: unsigned char i=0;
+   178  06EE  01B1               	clrf	?a_ds1302_read+2
+   179                           ;DS1302.C: 114: add+=1;
+   180  06EF  0AAF               	incf	?a_ds1302_read
+   181                           ;DS1302.C: 115: TRISC1=0;
+   182  06F0  1683               	bsf	3,5
+   183  06F1  1087               	bcf	7,1
+   184                           ;DS1302.C: 116: asm("nop");asm("nop");
+   185  06F2  0000               	nop	;#
+   186  06F3  0000               	nop	;#
+   187                           ;DS1302.C: 117: RC2=0;
+   188  06F4  1283               	bcf	3,5
+   189  06F5  1107               	bcf	7,2
+   190                           ;DS1302.C: 118: asm("nop");asm("nop");
+   191  06F6  0000               	nop	;#
+   192  06F7  0000               	nop	;#
+   193                           ;DS1302.C: 119: RC0=0;
+   194  06F8  1007               	bcf	7,0
+   195                           ;DS1302.C: 120: asm("nop");asm("nop");
+   196  06F9  0000               	nop	;#
+   197  06FA  0000               	nop	;#
+   198                           ;DS1302.C: 121: RC2=1;
+   199  06FB  1507               	bsf	7,2
+   200                           ;DS1302.C: 122: asm("nop");asm("nop");
+   201  06FC  0000               	nop	;#
+   202  06FD  0000               	nop	;#
+   203                           ;DS1302.C: 123: for(i=8;i>0;i--)
+   204  06FE  3008               	movlw	8
+   205  06FF  00B1               	movwf	?a_ds1302_read+2
+   206  0700                     l13
+   207                           ;DS1302.C: 124: {
+   208                           ;DS1302.C: 125: if(add&0x01)
+   209  0700  1C2F               	btfss	?a_ds1302_read,0
+   210  0701  2F04               	goto	l16
+   211                           ;DS1302.C: 126: {RC1=1;}
+   212  0702  1487               	bsf	7,1
+   213                           ;DS1302.C: 127: else
+   214  0703  2F05               	goto	l17
+   215  0704                     l16
+   216                           ;DS1302.C: 128: {RC1=0;}
+   217  0704  1087               	bcf	7,1
+   218  0705                     l17
+   219                           ;DS1302.C: 130: asm("nop");asm("nop");
+   220  0705  0000               	nop	;#
+   221  0706  0000               	nop	;#
+   222                           ;DS1302.C: 131: RC0=1;
+   223  0707  1407               	bsf	7,0
+   224                           ;DS1302.C: 132: asm("nop");asm("nop");
+   225  0708  0000               	nop	;#
+   226  0709  0000               	nop	;#
+   227                           ;DS1302.C: 133: RC0=0;
+   228  070A  1007               	bcf	7,0
+   229                           ;DS1302.C: 134: asm("nop");asm("nop");
+   230  070B  0000               	nop	;#
+   231  070C  0000               	nop	;#
+   232                           ;DS1302.C: 135: add>>=1;
+   233  070D  1003               	bcf	3,0
+   234  070E  0CAF               	rrf	?a_ds1302_read
+   235                           ;DS1302.C: 136: }
+   236  070F  0BB1               	decfsz	?a_ds1302_read+2
+   237  0710  2F00               	goto	l13
+   238                           ;DS1302.C: 137: TRISC1=1;
+   239  0711  1683               	bsf	3,5
+   240  0712  1487               	bsf	7,1
+   241                           ;DS1302.C: 138: asm("nop");asm("nop");
+   242  0713  0000               	nop	;#
+   243  0714  0000               	nop	;#
+   244                           ;DS1302.C: 139: for(i=8;i>0;i--)
+   245  0715  3008               	movlw	8
+   246  0716  1283               	bcf	3,5
+   247  0717  00B1               	movwf	?a_ds1302_read+2
+   248  0718                     l18
+   249                           ;DS1302.C: 140: {
+   250                           ;DS1302.C: 141: data>>=1;
+   251  0718  1003               	bcf	3,0
+   252  0719  0CB0               	rrf	?a_ds1302_read+1
+   253                           ;DS1302.C: 142: if(PORTC&0X02)
+   254  071A  1887               	btfsc	7,1	;volatile
+   255                           ;DS1302.C: 143: {data|=0x80;}
+   256  071B  17B0               	bsf	?a_ds1302_read+1,7
+   257                           ;DS1302.C: 144: asm("nop");asm("nop");
+   258  071C  0000               	nop	;#
+   259  071D  0000               	nop	;#
+   260                           ;DS1302.C: 145: RC0=1;
+   261  071E  1407               	bsf	7,0
+   262                           ;DS1302.C: 146: asm("nop");asm("nop");
+   263  071F  0000               	nop	;#
+   264  0720  0000               	nop	;#
+   265                           ;DS1302.C: 147: RC0=0;
+   266  0721  1007               	bcf	7,0
+   267                           ;DS1302.C: 148: asm("nop");asm("nop");
+   268  0722  0000               	nop	;#
+   269  0723  0000               	nop	;#
+   270                           ;DS1302.C: 149: }
+   271  0724  0BB1               	decfsz	?a_ds1302_read+2
+   272  0725  2F18               	goto	l18
+   273                           ;DS1302.C: 150: RC2=0;
+   274  0726  1107               	bcf	7,2
+   275                           ;DS1302.C: 151: asm("nop");asm("nop");
+   276  0727  0000               	nop	;#
+   277  0728  0000               	nop	;#
+   278                           ;DS1302.C: 152: return(data);
+   279  0729  0830               	movf	?a_ds1302_read+1,w
+   280                           ;DS1302.C: 153: }
+   281  072A  0008               	return
+   282                           ;DS1302.C: 178: void ds1302_read_time(void)
+   283                           ;DS1302.C: 179: {
+   284  072B                     _ds1302_read_time
+   285                           ;DS1302.C: 180: timer[1]=ds1302_read(0x8c);
+   286  072B  308C               	movlw	-116
+   287  072C  26EB               	fcall	_ds1302_read
+   288  072D  00A6               	movwf	_timer+1
+   289                           ;DS1302.C: 181: timer[2]=ds1302_read(0x88);
+   290  072E  3088               	movlw	-120
+   291  072F  26EB               	fcall	_ds1302_read
+   292  0730  00A7               	movwf	_timer+2
+   293                           ;DS1302.C: 182: timer[3]=ds1302_read(0x86);
+   294  0731  3086               	movlw	-122
+   295  0732  26EB               	fcall	_ds1302_read
+   296  0733  00A8               	movwf	_timer+3
+   297                           ;DS1302.C: 183: timer[7]=ds1302_read(0x8a);
+   298  0734  308A               	movlw	-118
+   299  0735  26EB               	fcall	_ds1302_read
+   300  0736  00AC               	movwf	_timer+7
+   301                           ;DS1302.C: 184: timer[4]=ds1302_read(0x84);
+   302  0737  3084               	movlw	-124
+   303  0738  26EB               	fcall	_ds1302_read
+   304  0739  00A9               	movwf	_timer+4
+   305                           ;DS1302.C: 185: timer[5]=ds1302_read(0x82);
+   306  073A  3082               	movlw	-126
+   307  073B  26EB               	fcall	_ds1302_read
+   308  073C  00AA               	movwf	_timer+5
+   309                           ;DS1302.C: 186: timer[6]=ds1302_read(0x80);
+   310  073D  3080               	movlw	-128
+   311  073E  26EB               	fcall	_ds1302_read
+   312  073F  00AB               	movwf	_timer+6
+   313                           ;DS1302.C: 187: }
+   314  0740  0008               	return
+   315  0741                     _ds1302_write
+   316                           ;	_add assigned to ?a_ds1302_write+0
+   317  0000                     _ds1302_write$add	set	?a_ds1302_write
+   318                           ;	_i assigned to ?a_ds1302_write+1
+   319  0000                     _ds1302_write$i	set	?a_ds1302_write+1
+   320                           ;_add stored from w
+   321  0741  0183               	clrf	3	;select bank 0
+   322  0742  00B0               	movwf	?a_ds1302_write
+   323                           ;DS1302.C: 67: unsigned char i=0;
+   324  0743  01B1               	clrf	?a_ds1302_write+1
+   325                           ;DS1302.C: 68: TRISC1=0;
+   326  0744  1683               	bsf	3,5
+   327  0745  1087               	bcf	7,1
+   328                           ;DS1302.C: 69: asm("nop");asm("nop");
+   329  0746  0000               	nop	;#
+   330  0747  0000               	nop	;#
+   331                           ;DS1302.C: 70: RC2=0;
+   332  0748  1283               	bcf	3,5
+   333  0749  1107               	bcf	7,2
+   334                           ;DS1302.C: 71: asm("nop");asm("nop");
+   335  074A  0000               	nop	;#
+   336  074B  0000               	nop	;#
+   337                           ;DS1302.C: 72: RC0=0;
+   338  074C  1007               	bcf	7,0
+   339                           ;DS1302.C: 73: asm("nop");asm("nop");
+   340  074D  0000               	nop	;#
+   341  074E  0000               	nop	;#
+   342                           ;DS1302.C: 74: RC2=1;
+   343  074F  1507               	bsf	7,2
+   344                           ;DS1302.C: 75: asm("nop");asm("nop");
+   345  0750  0000               	nop	;#
+   346  0751  0000               	nop	;#
+   347                           ;DS1302.C: 76: for(i=8;i>0;i--)
+   348  0752  3008               	movlw	8
+   349  0753  00B1               	movwf	?a_ds1302_write+1
+   350  0754                     l2
+   351                           ;DS1302.C: 77: {
+   352                           ;DS1302.C: 78: if(add&0x01)
+   353  0754  1C30               	btfss	?a_ds1302_write,0
+   354  0755  2F58               	goto	l5
+   355                           ;DS1302.C: 79: RC1=1;
+   356  0756  1487               	bsf	7,1
+   357                           ;DS1302.C: 80: else
+   358  0757  2F59               	goto	l6
+   359  0758                     l5
+   360                           ;DS1302.C: 81: RC1=0;
+   361  0758  1087               	bcf	7,1
+   362  0759                     l6
+   363                           ;DS1302.C: 82: asm("nop");asm("nop");
+   364  0759  0000               	nop	;#
+   365  075A  0000               	nop	;#
+   366                           ;DS1302.C: 83: RC0=1;
+   367  075B  1407               	bsf	7,0
+   368                           ;DS1302.C: 84: asm("nop");asm("nop");
+   369  075C  0000               	nop	;#
+   370  075D  0000               	nop	;#
+   371                           ;DS1302.C: 85: RC0=0;
+   372  075E  1007               	bcf	7,0
+   373                           ;DS1302.C: 86: asm("nop");asm("nop");
+   374  075F  0000               	nop	;#
+   375  0760  0000               	nop	;#
+   376                           ;DS1302.C: 87: add>>=1;
+   377  0761  1003               	bcf	3,0
+   378  0762  0CB0               	rrf	?a_ds1302_write
+   379                           ;DS1302.C: 88: }
+   380  0763  0BB1               	decfsz	?a_ds1302_write+1
+   381  0764  2F54               	goto	l2
+   382                           ;DS1302.C: 89: for(i=8;i>0;i--)
+   383  0765  3008               	movlw	8
+   384  0766  00B1               	movwf	?a_ds1302_write+1
+   385  0767                     l7
+   386                           ;DS1302.C: 90: {
+   387                           ;DS1302.C: 91: if(data&0x01)
+   388  0767  1C2F               	btfss	?_ds1302_write,0
+   389  0768  2F6B               	goto	l10
+   390                           ;DS1302.C: 92: RC1=1;
+   391  0769  1487               	bsf	7,1
+   392                           ;DS1302.C: 93: else
+   393  076A  2F6C               	goto	l11
+   394  076B                     l10
+   395                           ;DS1302.C: 94: RC1=0;
+   396  076B  1087               	bcf	7,1
+   397  076C                     l11
+   398                           ;DS1302.C: 95: asm("nop");asm("nop");
+   399  076C  0000               	nop	;#
+   400  076D  0000               	nop	;#
+   401                           ;DS1302.C: 96: RC0=1;
+   402  076E  1407               	bsf	7,0
+   403                           ;DS1302.C: 97: asm("nop");asm("nop");
+   404  076F  0000               	nop	;#
+   405  0770  0000               	nop	;#
+   406                           ;DS1302.C: 98: RC0=0;
+   407  0771  1007               	bcf	7,0
+   408                           ;DS1302.C: 99: asm("nop");asm("nop");
+   409  0772  0000               	nop	;#
+   410  0773  0000               	nop	;#
+   411                           ;DS1302.C: 100: data>>=1;
+   412  0774  1003               	bcf	3,0
+   413  0775  0CAF               	rrf	?_ds1302_write
+   414                           ;DS1302.C: 101: }
+   415  0776  0BB1               	decfsz	?a_ds1302_write+1
+   416  0777  2F67               	goto	l7
+   417                           ;DS1302.C: 102: RC2=0;
+   418  0778  1107               	bcf	7,2
+   419                           ;DS1302.C: 103: asm("nop");asm("nop");
+   420  0779  0000               	nop	;#
+   421  077A  0000               	nop	;#
+   422                           ;DS1302.C: 104: TRISC1=1;
+   423  077B  1683               	bsf	3,5
+   424  077C  1487               	bsf	7,1
+   425                           ;DS1302.C: 105: asm("nop");asm("nop");
+   426  077D  0000               	nop	;#
+   427  077E  0000               	nop	;#
+   428                           ;DS1302.C: 106: }
+   429  077F  1283               	bcf	3,5
+   430  0780  0008               	return
+   431                           ;DS1302.C: 155: unsigned char check_ds1302(void
+      +                          )
+   432                           ;DS1302.C: 156: {
+   433  0781                     _check_ds1302
+   434                           ;DS1302.C: 157: ds1302_write(0x8e,0x80);
+   435  0781  3080               	movlw	-128
+   436  0782  0183               	clrf	3	;select bank 0
+   437  0783  00AF               	movwf	?_ds1302_write
+   438  0784  308E               	movlw	-114
+   439  0785  2741               	fcall	_ds1302_write
+   440                           ;DS1302.C: 158: if(ds1302_read(0x8e)==0x80)
+   441  0786  308E               	movlw	-114
+   442  0787  26EB               	fcall	_ds1302_read
+   443  0788  3A80               	xorlw	-128
+   444  0789  1903               	btfsc	3,2
+   445                           ;DS1302.C: 159: return 1;
+   446  078A  3401               	retlw	1
+   447                           ;DS1302.C: 160: return 0;
+   448  078B  3400               	retlw	0
+   449                           ;DS1302.C: 163: void ds1302_write_time(void)
+   450                           ;DS1302.C: 164: {
+   451  078C                     _ds1302_write_time
+   452                           ;DS1302.C: 165: ds1302_write(0x8e,0x00);
+   453  078C  0183               	clrf	3	;select bank 0
+   454  078D  01AF               	clrf	?_ds1302_write
+   455  078E  308E               	movlw	-114
+   456  078F  2741               	fcall	_ds1302_write
+   457                           ;DS1302.C: 166: ds1302_write(0x80,0x80);
+   458  0790  3080               	movlw	-128
+   459  0791  00AF               	movwf	?_ds1302_write
+   460  0792  2741               	fcall	_ds1302_write
+   461                           ;DS1302.C: 167: ds1302_write(0x90,0xa9);
+   462  0793  30A9               	movlw	-87
+   463  0794  00AF               	movwf	?_ds1302_write
+   464  0795  3090               	movlw	-112
+   465  0796  2741               	fcall	_ds1302_write
+   466                           ;DS1302.C: 168: ds1302_write(0x8c,timer[1]);
+   467  0797  0826               	movf	_timer+1,w
+   468  0798  00AF               	movwf	?_ds1302_write
+   469  0799  308C               	movlw	-116
+   470  079A  2741               	fcall	_ds1302_write
+   471                           ;DS1302.C: 169: ds1302_write(0x88,timer[2]);
+   472  079B  0827               	movf	_timer+2,w
+   473  079C  00AF               	movwf	?_ds1302_write
+   474  079D  3088               	movlw	-120
+   475  079E  2741               	fcall	_ds1302_write
+   476                           ;DS1302.C: 170: ds1302_write(0x86,timer[3]);
+   477  079F  0828               	movf	_timer+3,w
+   478  07A0  00AF               	movwf	?_ds1302_write
+   479  07A1  3086               	movlw	-122
+   480  07A2  2741               	fcall	_ds1302_write
+   481                           ;DS1302.C: 171: ds1302_write(0x8a,timer[7]);
+   482  07A3  082C               	movf	_timer+7,w
+   483  07A4  00AF               	movwf	?_ds1302_write
+   484  07A5  308A               	movlw	-118
+   485  07A6  2741               	fcall	_ds1302_write
+   486                           ;DS1302.C: 172: ds1302_write(0x84,timer[4]);
+   487  07A7  0829               	movf	_timer+4,w
+   488  07A8  00AF               	movwf	?_ds1302_write
+   489  07A9  3084               	movlw	-124
+   490  07AA  2741               	fcall	_ds1302_write
+   491                           ;DS1302.C: 173: ds1302_write(0x82,timer[5]);
+   492  07AB  082A               	movf	_timer+5,w
+   493  07AC  00AF               	movwf	?_ds1302_write
+   494  07AD  3082               	movlw	-126
+   495  07AE  2741               	fcall	_ds1302_write
+   496                           ;DS1302.C: 174: ds1302_write(0x80,timer[6]);
+   497  07AF  082B               	movf	_timer+6,w
+   498  07B0  00AF               	movwf	?_ds1302_write
+   499  07B1  3080               	movlw	-128
+   500  07B2  2741               	fcall	_ds1302_write
+   501                           ;DS1302.C: 175: ds1302_write(0x8e,0x80);
+   502  07B3  3080               	movlw	-128
+   503  07B4  00AF               	movwf	?_ds1302_write
+   504  07B5  308E               	movlw	-114
+   505  07B6  2F41               	ljmp	_ds1302_write
+   506                           ;DS1302.C: 205: void timer0_init(void)
+   507                           ;DS1302.C: 206: {
+   508  07B7                     _timer0_init
+   509                           ;DS1302.C: 207: OPTION=0x07;
+   510  07B7  3007               	movlw	7
+   511  07B8  1683               	bsf	3,5
+   512  07B9  1303               	bcf	3,6	;carry unused
+   513  07BA  0081               	movwf	1
+   514                           ;DS1302.C: 208: INTCON=0XA0;
+   515  07BB  30A0               	movlw	-96
+   516  07BC  008B               	movwf	11	;volatile
+   517                           ;DS1302.C: 209: TMR0=0xE8;
+   518  07BD  30E8               	movlw	-24
+   519  07BE  1283               	bcf	3,5
+   520  07BF  0081               	movwf	1	;volatile
+   521                           ;DS1302.C: 210: }
+   522  07C0  0008               	return
+   523                           ;DS1302.C: 244: void main(void)
+   524                           ;DS1302.C: 245: {
+   525  07C1                     _main
+   526                           ;	_m assigned to ?a_main+0
+   527  0000                     _main$m	set	?a_main
+   528                           ;DS1302.C: 246: unsigned int n,m=0;
+   529  07C1  1283               	bcf	3,5
+   530  07C2  1303               	bcf	3,6	;carry unused
+   531  07C3  01AD               	clrf	?a_main
+   532  07C4  01AE               	clrf	?a_main+1
+   533                           ;DS1302.C: 247: TRISA=0x00;
+   534  07C5  1683               	bsf	3,5
+   535  07C6  0185               	clrf	5	;volatile
+   536                           ;DS1302.C: 248: PORTA=0xDF;
+   537  07C7  30DF               	movlw	-33
+   538  07C8  1283               	bcf	3,5
+   539  07C9  0085               	movwf	5	;volatile
+   540                           ;DS1302.C: 250: TRISD=0x00;
+   541  07CA  1683               	bsf	3,5
+   542  07CB  0188               	clrf	8	;volatile
+   543                           ;DS1302.C: 251: PORTD=0XFF;
+   544  07CC  30FF               	movlw	-1
+   545  07CD  1283               	bcf	3,5
+   546  07CE  0088               	movwf	8	;volatile
+   547                           ;DS1302.C: 252: TRISE=0X03;
+   548  07CF  3003               	movlw	3
+   549  07D0  1683               	bsf	3,5
+   550  07D1  0089               	movwf	9	;volatile
+   551                           ;DS1302.C: 253: PORTE=0X05;
+   552  07D2  3005               	movlw	5
+   553  07D3  1283               	bcf	3,5
+   554  07D4  0089               	movwf	9	;volatile
+   555                           ;DS1302.C: 254: PORTE=0X00;
+   556  07D5  0189               	clrf	9	;volatile
+   557                           ;DS1302.C: 256: TRISC=0x00;
+   558  07D6  1683               	bsf	3,5
+   559  07D7  0187               	clrf	7	;volatile
+   560                           ;DS1302.C: 257: PORTC=0xff;
+   561  07D8  30FF               	movlw	-1
+   562  07D9  1283               	bcf	3,5
+   563  07DA  0087               	movwf	7	;volatile
+   564                           ;DS1302.C: 259: timer[1]=0x09;
+   565  07DB  3009               	movlw	9
+   566  07DC  00A6               	movwf	_timer+1
+   567                           ;DS1302.C: 260: timer[2]=0x08;
+   568  07DD  3008               	movlw	8
+   569  07DE  00A7               	movwf	_timer+2
+   570                           ;DS1302.C: 261: timer[3]=0x20;
+   571  07DF  3020               	movlw	32
+   572  07E0  00A8               	movwf	_timer+3
+   573                           ;DS1302.C: 262: timer[4]=0x12;
+   574  07E1  3012               	movlw	18
+   575  07E2  00A9               	movwf	_timer+4
+   576                           ;DS1302.C: 263: timer[5]=0x12;
+   577  07E3  00AA               	movwf	_timer+5
+   578                           ;DS1302.C: 264: timer[6]=0x00;
+   579  07E4  01AB               	clrf	_timer+6
+   580                           ;DS1302.C: 265: timer[7]=0x04;
+   581  07E5  3004               	movlw	4
+   582  07E6  00AC               	movwf	_timer+7
+   583                           ;DS1302.C: 266: ds1302_write_time();
+   584  07E7  278C  120A  118A   	fcall	_ds1302_write_time
+   585                           ;DS1302.C: 268: timer0_init();
+   586  07EA  27B7               	fcall	_timer0_init
+   587  07EB                     l52
+   588                           ;DS1302.C: 270: while(1)
+   589                           ;DS1302.C: 271: {
+   590  07EB  272B  120A  118A   	fcall	_ds1302_read_time
+   591                           ;DS1302.C: 273: Process();
+   592  07EE  26C5               	fcall	_Process
+   593                           ;DS1302.C: 274: delay(100);
+   594  07EF  3064               	movlw	100
+   595  07F0  00AF               	movwf	?_delay
+   596  07F1  01B0               	clrf	?_delay+1
+   597  07F2  26B2               	fcall	_delay
+   598                           ;DS1302.C: 275: }
+   599  07F3  2FEB               	goto	l52
+   600                           
+   601                           	psect	intcode
+   602                           ;DS1302.C: 214: void interrupt TMR0INT()
+   603                           ;DS1302.C: 215: {
+   604  000F                     _TMR0INT
+   605  000F                     int_func
+   606                           ;DS1302.C: 216: T0IF=0;
+   607  000F  110B               	bcf	11,2
+   608                           ;DS1302.C: 217: TMR0=0xE8;
+   609  0010  30E8               	movlw	-24
+   610  0011  1283               	bcf	3,5
+   611  0012  1303               	bcf	3,6	;carry unused
+   612  0013  0081               	movwf	1	;volatile
+   613                           ;DS1302.C: 218: PORTD=0xff;
+   614  0014  30FF               	movlw	-1
+   615  0015  0088               	movwf	8	;volatile
+   616                           ;DS1302.C: 219: PORTA=0XDF;
+   617  0016  30DF               	movlw	-33
+   618  0017  0085               	movwf	5	;volatile
+   619                           ;DS1302.C: 220: PORTD=s[sel];
+   620  0018  0820               	movf	_sel,w
+   621  0019  3E21               	addlw	_s
+   622  001A  0084               	movwf	4
+   623  001B  1383               	bcf	3,7
+   624  001C  0800               	movf	0,w
+   625  001D  0088               	movwf	8	;volatile
+   626                           ;DS1302.C: 221: switch(sel)
+   627  001E  2828               	goto	l43
+   628  001F                     l44
+   629                           ;DS1302.C: 222: {
+   630  001F  301D               	movlw	29
+   631  0020  2826               	goto	L3
+   632  0021                     l45
+   633                           ;DS1302.C: 225: case 0x01: PORTA=0X1B;break;
+   634  0021  301B               	movlw	27
+   635  0022  2826               	goto	L3
+   636  0023                     l46
+   637                           ;DS1302.C: 227: case 0x02: PORTA=0X17;break;
+   638  0023  3017               	movlw	23
+   639  0024  2826               	goto	L3
+   640  0025                     l47
+   641                           ;DS1302.C: 229: case 0x03: PORTA=0X0F;break;
+   642  0025  300F               	movlw	15
+   643  0026                     L3
+   644  0026  0085               	movwf	5	;volatile
+   645  0027  2834               	goto	l42
+   646  0028                     l43
+   647  0028  0820               	movf	_sel,w
+   648  0029  1903               	btfsc	3,2
+   649  002A  281F               	goto	l44
+   650  002B  3A01               	xorlw	1
+   651  002C  1903               	btfsc	3,2
+   652  002D  2821               	goto	l45
+   653  002E  3A03               	xorlw	3
+   654  002F  1903               	btfsc	3,2
+   655  0030  2823               	goto	l46
+   656  0031  3A01               	xorlw	1
+   657  0032  1903               	btfsc	3,2
+   658  0033  2825               	goto	l47
+   659  0034                     l42
+   660                           ;DS1302.C: 231: if(++sel>3)sel=0;
+   661  0034  3004               	movlw	4
+   662  0035  0AA0               	incf	_sel
+   663  0036  0220               	subwf	_sel,w
+   664  0037  1803               	btfsc	3,0
+   665  0038  01A0               	clrf	_sel
+   666                           
+   667                           	psect	intsave_0
+   668  0071                     saved_w
+   669  0071                     	ds	1
+   670                           
+   671                           	psect	intret
+   672  003B  083F               	movf	saved_fsr,w
+   673  003C  0084               	movwf	4	;restore FSR
+   674  003D  0840               	movf	saved_pclath,w
+   675  003E  008A               	movwf	10
+   676  003F                     int_restore
+   677  003F  083E               	movf	saved_status,w
+   678  0040  0083               	movwf	3
+   679  0041  0EF1               	swapf	saved_w
+   680  0042  0E71               	swapf	saved_w,w
+   681  0043  0009               	retfie
+   682                           
+   683                           	psect	intentry
+   684  0004                     int_entry
+   685  0004  00F1               	movwf	saved_w
+   686  0005  0803               	movf	3,w
+   687  0006  0183               	clrf	3
+   688  0007  00BE               	movwf	saved_status
+   689  0008  0804               	movf	4,w
+   690  0009  00BF               	movwf	saved_fsr
+   691  000A  080A               	movf	10,w
+   692  000B  00C0               	movwf	saved_pclath
+   693  000C  018A               	clrf	10
+   694                           
+   695                           	psect	intsave
+   696  003E                     saved_status
+   697  003E                     	ds	1
+   698  003F                     saved_fsr
+   699  003F                     	ds	1
+   700  0040                     saved_pclath
+   701  0040                     	ds	1
+   702                           
+   703                           	psect	text11
+   704  0000                     
+   705  0000                     
+   706  0000                     
+   707  0000                     
+   708  0000                     
+   709  0000                     
+   710  0000                     
+   711  0000                     
+   712  0000                     
+   713  0000                     
+   714  0000                     
+   715  0000                     
+   716  0000                     
+   717  0000                     
+   718  0000                     
+   719  0000                     
+   720  0000                     
+   721  0000                     
+   722  0000                     
+   723  0000                     
+   724  0000                     
+   725  0000                     
+   726  0000                     
+   727  0000                     
+   728  0000                     
+   729  0000                     
+   730  0000                     
+   731  0000                     
+   732  0000                     
+   733  0000                     
+   734  0000                     
+   735  0000                     
+   736  0000                     
+   737  0000                     
+   738  0000                     
+   739  0000                     
+   740  0000                     
+   741  0000                     
+   742  0000                     
+   743  0000                     
+   744  0000                     
+   745  0000                     
+   746  0000                     
+   747  0000                     
+   748  0000                     
+   749  0000                     
+   750  0000                     
+   751  0000                     
+   752  0000                     
+   753  0000                     
+   754  0000                     
+   755  0000                     
+   756  0000                     
+   757  0000                     
+   758  0000                     
+   759  0000                     
+   760  0000                     
+   761  0000                     
+   762  0000                     
+   763  0000                     
+   764  0000                     
+   765  0000                     
+   766  0000                     
+   767  0000                     
+   768  0000                     
+   769  0000                     
+   770  0000                     
+   771  0000                     
+   772  0000                     
+   773  0000                     
+   774  0000                     
+   775  0000                     
+   776  0000                     
+   777  0000                     
+   778  0000                     
+   779  0000                     
+   780  0000                     
+   781  0000                     
+   782  0000                     
+   783  0000                     
+   784  0000                     
+   785  0000                     
+   786  0000                     
+   787  0000                     
+   788  0000                     
+   789  0000                     
+   790  0000                     
+   791  0000                     
+   792  0000                     
+   793  0000                     
+   794  0000                     
+   795  0000                     
+   796  0000                     
+   797  0000                     
+   798  0000                     
+   799  0000                     
+   800  0000                     
+   801  0000                     
+   802  0000                     
+   803  0000                     
+   804  0000                     
+   805  0000                     
+   806  0000                     
+   807  0000                     
+   808  0000                     
+   809  0000                     
+   810  0000                     
+   811  0000                     
+   812  0000                     
+   813  0000                     
+   814  0000                     
+   815  0000                     
+   816  0000                     
+   817  0000                     
+   818  0000                     
+   819  0000                     
+   820  0000                     
+   821  0000                     
+   822  0000                     
+   823  0000                     
+   824  0000                     
+   825  0000                     
+   826  0000                     
+   827  0000                     
+   828  0000                     
+   829  0000                     
+   830  0000                     
+   831  0000                     
+   832  0000                     
+   833  0000                     
+   834  0000                     
+   835  0000                     
+   836  0000                     
+   837  0000                     
+   838  0000                     
+   839  0000                     
+   840  0000                     
+   841  0000                     
+   842  0000                     
+   843  0000                     
+   844  0000                     
+   845  0000                     
+   846  0000                     
+   847  0000                     
+   848  0000                     
+   849  0000                     
+   850  0000                     
+   851  0000                     
+   852  0000                     
+   853  0000                     
+   854  0000                     
+   855  0000                     
+   856  0000                     
+   857  0000                     
+   858  0000                     
+   859  0000                     
+   860  0000                     
+   861  0000                     
+   862  0000                     
+   863  0000                     
+   864  0000                     
+   865  0000                     
+   866  0000                     
+   867  0000                     
+   868  0000                     
+   869  0000                     
+   870  0000                     
+   871  0000                     
+   872  0000                     
+   873  0000                     
+   874  0000                     
+   875  0000                     
+   876  0000                     
+   877  0000                     
+   878  0000                     
+   879  0000                     
+   880  0000                     
+   881  0000                     
+   882  0000                     
+   883  0000                     
+   884  0000                     
+   885  0000                     
+   886  0000                     
+   887  0000                     
+   888  0000                     
+   889  0000                     
+   890  0000                     
+   891  0000                     
+   892  0000                     
+   893  0000                     
+   894  0000                     
+   895  0000                     
+   896  0000                     
+   897  0000                     
+   898  0000                     
+   899  0000                     
+   900  0000                     
+   901  0000                     
+   902  0000                     
+   903  0000                     
+   904  0000                     
+   905  0000                     
+   906  0000                     
+   907  0000                     
+   908  0000                     
+   909  0000                     
+   910  0000                     
+   911  0000                     
+   912  0000                     
+   913  0000                     
+   914  0000                     
+   915  0000                     
+   916  0000                     
+   917  0000                     
+   918  0000                     
+   919  0000                     
+   920  0000                     
+   921  0000                     
+   922  0000                     
+   923  0000                     
+   924  0000                     
+   925  0000                     
+   926  0000                     
+   927  0000                     
+   928  0000                     
+   929  0000                     
+   930  0000                     
+   931  0000                     
+   932  0000                     
+   933  0000                     
+   934  0000                     
+   935  0000                     
+   936  0000                     
+   937  0000                     
+   938  0000                     
+   939  0000                     
+   940  0000                     
+   941  0000                     
+   942  0000                     
+   943  0000                     
+   944  0000                     
+   945  0000                     
+   946  0000                     
+   947  0000                     
+   948  0000                     
+   949  0000                     
+   950  0000                     
+   951  0000                     
+   952  0000                     
+   953  0000                     
+   954  0000                     
+   955  0000                     
+   956  0000                     
+   957  0000                     
+   958  0000                     
+   959  0000                     
+   960  0000                     
+   961  0000                     
+   962  0000                     
+   963  0000                     
+   964  0000                     
+   965  0000                     
+   966  0000                     
+   967  0000                     
+   968  0000                     
+   969  0000                     
+   970  0000                     
+   971  0000                     
+   972  0000                     
+   973  0000                     
+   974  0000                     
+   975  0000                     
+   976  0000                     
+   977  0000                     
+   978  0000                     
+   979  0000                     
+   980                           
+   981                           	psect	rbss_0
+   982  0020                     _sel
+   983  0020                     	ds	1
+   984  0021                     _s
+   985  0021                     	ds	4
+   986  0025                     _timer
+   987  0025                     	ds	8
+   988                           
+   989                           	psect	temp
+   990  0070                     btemp
+   991  0070                     	ds	1
+
+
+HI-TECH Software PICC Macro Assembler V8.05PL2
+Symbol Table                                          Sun Aug  7 02:09:25 2011
+
+           ?_delay 002F             ?a_main 002D           _delay_us 06A8  
+                l2 0754                  l5 0758                  l6 0759  
+                l7 0767                  _s 0021       _check_ds1302 0781  
+          ?a_delay 0031                 l10 076B                 l11 076C  
+               l13 0700                 l30 06AC                 l32 06B3  
+               l16 0704                 l17 0705                 l42 0034  
+               l18 0718                 l43 0028                 l35 06BE  
+               l27 06AB                 l52 07EB                 l44 001F  
+               l45 0021                 l37 06BA                 l46 0023  
+               l47 0025                 l39 06B5                 fsr 0004  
+   ?a_ds1302_write 0030  _ds1302_write_time 078C      ?_ds1302_write 002F  
+ _ds1302_read_time 072B                _sel 0020            _TMR0INT 000F  
+      _ds1302_read 06EB         save_btemp0 000D               _main 07C1  
+             btemp 0070               start 0044             saved_w 0071  
+          _Process 06C5         ?a_delay_us 002D           int_entry 0004  
+    ?a_ds1302_read 002F       _ds1302_write 0741           saved_fsr 003F  
+            _Table 0032            _temp_pa 003D              _delay 06B2  
+      saved_pclath 0040              _timer 0025              pclath 000A  
+      saved_status 003E              status 0003          copy_bank0 0048  
+          int_func 000F         clear_bank0 0044        _timer0_init 07B7  
+       int_restore 003F         used_btemp0 0001  
