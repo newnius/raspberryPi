@@ -7,7 +7,22 @@ ipset restore < /etc/chnroute.ipset
 iptables -t nat -N SHADOWSOCKS
 
 # exclude your own vps IPs
-iptables -t nat -A SHADOWSOCKS -d 1.2.3.4/24 -j RETURN
+
+# exclude CloudFlare IPs
+iptables -t nat -A SHADOWSOCKS -d 173.245.48.0/20 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 103.21.244.0/22 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 103.22.200.0/22 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 103.31.4.0/22 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 141.101.64.0/18 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 108.162.192.0/18 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 190.93.240.0/20 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 188.114.96.0/20 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 197.234.240.0/22 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 198.41.128.0/17 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 162.158.0.0/15 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 104.16.0.0/12 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 172.64.0.0/13 -j RETURN
+iptables -t nat -A SHADOWSOCKS -d 131.0.72.0/22 -j RETUR
 
 # excluce intranet ips & Chinese IPs
 iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
@@ -28,7 +43,7 @@ iptables -t nat -A OUTPUT -p tcp -j SHADOWSOCKS
 iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
 
 # overide default dns ns of devices
-iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5353
-iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 5353
+iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 15353
+iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 15353
 
 exit 0

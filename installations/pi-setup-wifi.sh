@@ -4,8 +4,6 @@ sudo apt update
 
 sudo apt install -y hostapd dnsmasq
 
-sudo apt install -y vim
-
 sudo bash -c "cat >>/etc/dnsmasq.conf <<EOF
 #this line existes to make sure below starts in a new line
 interface=wlan0
@@ -44,4 +42,5 @@ sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 exit 0
 EOF"
 
-sudo reboot
+# sudo reboot
+echo -e "now reboot to take effect"
