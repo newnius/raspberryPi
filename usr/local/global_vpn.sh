@@ -43,7 +43,7 @@ iptables -t nat -A OUTPUT -p tcp -j SHADOWSOCKS
 iptables -t nat -A PREROUTING -p tcp -j SHADOWSOCKS
 
 # overide default dns ns of devices
-iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 15353
-iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 15353
+iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53
+iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53
 
 exit 0
