@@ -22,7 +22,7 @@ iptables -t nat -A SHADOWSOCKS -d 198.41.128.0/17 -j RETURN
 iptables -t nat -A SHADOWSOCKS -d 162.158.0.0/15 -j RETURN
 iptables -t nat -A SHADOWSOCKS -d 104.16.0.0/12 -j RETURN
 iptables -t nat -A SHADOWSOCKS -d 172.64.0.0/13 -j RETURN
-iptables -t nat -A SHADOWSOCKS -d 131.0.72.0/22 -j RETUR
+iptables -t nat -A SHADOWSOCKS -d 131.0.72.0/22 -j RETURN
 
 # excluce intranet ips & Chinese IPs
 iptables -t nat -A SHADOWSOCKS -d 0.0.0.0/8 -j RETURN
